@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple WebSocket Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 10px;
+        }
+        input {
+            padding: 5px;
+            margin-right: 5px;
+        }
+        button {
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Simple WebSocket Chat</h2>
+    <ul id="messages"></ul>
+    <input id="messageInput" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8080/ws");
+        const messageInput = document.getElementById("messageInput");
+        const messages = document.getElementById("messages");
+
+        socket.onopen = () => {
+            console.log("Connected to WebSocket Server");
+        };
+
+        socket.onmessage = (event) => {
+            const li = document.createElement("li");
+            li.textContent = "Server: " + event.data;
+            messages.appendChild(li);
+        };
+
+        socket.onclose = () => {
+            console.log("Connection closed");
+        };
+
+        function sendMessage() {
+            const message = messageInput.value;
+            if (message) {
+                socket.send(message);
+                const li = document.createElement("li");
+                li.textContent = "You: " + message;
+                messages.appendChild(li);
+                messageInput.value = "";
+            }
+        }
+    </script>
+</body>
+</html>
