@@ -1,62 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Simple WebSocket Chat</title>
+    <title>Live Chat WebSocket</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 50px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
+        #chat {
+            height: 300px;
+            border: 1px solid #333;
+            overflow-y: auto;
             margin-bottom: 10px;
+            padding: 10px;
         }
-        input {
-            padding: 5px;
-            margin-right: 5px;
+
+        #message {
+            width: 80%;
         }
-        button {
-            padding: 5px;
+
+        #send {
+            width: 15%;
         }
     </style>
 </head>
+
 <body>
-    <h2>Simple WebSocket Chat</h2>
-    <ul id="messages"></ul>
-    <input id="messageInput" placeholder="Type a message..." />
-    <button onclick="sendMessage()">Send</button>
+    <h2>Live Chat WebSocket</h2>
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Type a message..." />
+    <button id="send" onclick="sendMessage()">Send</button>
 
     <script>
-        const socket = new WebSocket("ws://localhost:8080/ws");
-        const messageInput = document.getElementById("messageInput");
-        const messages = document.getElementById("messages");
+        const chat = document.getElementById("chat");
+        const messageInput = document.getElementById("message");
+        const ws = new WebSocket("ws://localhost:8080/ws");
 
-        socket.onopen = () => {
-            console.log("Connected to WebSocket Server");
+        // Display messages received from the server
+        ws.onmessage = (event) => {
+            const messageElem = document.createElement("div");
+            messageElem.textContent = event.data;
+            chat.appendChild(messageElem);
         };
 
-        socket.onmessage = (event) => {
-            const li = document.createElement("li");
-            li.textContent = "Server: " + event.data;
-            messages.appendChild(li);
-        };
-
-        socket.onclose = () => {
-            console.log("Connection closed");
-        };
-
+        // Send a message to the server
         function sendMessage() {
             const message = messageInput.value;
             if (message) {
-                socket.send(message);
-                const li = document.createElement("li");
-                li.textContent = "You: " + message;
-                messages.appendChild(li);
+                ws.send(message);
                 messageInput.value = "";
             }
         }
     </script>
 </body>
+
 </html>
