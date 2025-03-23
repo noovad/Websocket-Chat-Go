@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Chat Simulation</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <h2>WebSocket Real-Time Chat Simulation</h2>
+    <label for="userSelect">Select User:</label>
+    <select id="userSelect">
+        <option value="">-- Choose User --</option>
+        <option value="Alex">Alex</option>
+        <option value="Jeny">Jeny</option>
+        <option value="Aldo">Aldo</option>
+        <option value="Steven">Steven</option>
+    </select>
+    <button onclick="login()">Login</button>
+
+    <h3>Online Users:</h3>
+    <ul id="user-list">None</ul>
+
+    <h3>Chat Messages:</h3>
+    <ul id="messages"></ul>
+    <input id="messageInput" placeholder="Type a message..." disabled />
+    <button onclick="sendMessage()" disabled>Send</button>
+
+    <script src="/static/chat.js"></script>
+</body>
+
+</html>
