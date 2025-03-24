@@ -1,6 +1,8 @@
 package main
 
-import "sync"
+import (
+	"sync"
+)
 
 type Hub struct {
 	Clients    map[*Client]bool
@@ -12,10 +14,11 @@ type Hub struct {
 }
 
 type Message struct {
-	Type    string   `json:"type"`
-	Sender  string   `json:"sender,omitempty"`
-	Content string   `json:"content,omitempty"`
-	Users   []string `json:"users,omitempty"`
+	Type     string   `json:"type"`
+	Sender   string   `json:"sender,omitempty"`
+	Receiver string   `json:"receiver,omitempty"`
+	Content  string   `json:"content,omitempty"`
+	Users    []string `json:"users,omitempty"`
 }
 
 func NewHub() *Hub {
@@ -49,8 +52,17 @@ func (h *Hub) Run() {
 			h.mu.Unlock()
 
 		case message := <-h.Broadcast:
-			for client := range h.Clients {
-				client.Send <- message
+			h.mu.Lock()
+			receiverClient, receiverOk := h.Users[message.Receiver]
+			senderClient, senderOk := h.Users[message.Sender]
+			h.mu.Unlock()
+
+			if receiverOk {
+				receiverClient.Send <- message
+			}
+
+			if senderOk && message.Receiver != message.Sender {
+				senderClient.Send <- message
 			}
 		}
 	}

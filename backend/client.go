@@ -64,12 +64,15 @@ func (c *Client) ReadMessages() {
 			log.Println("Error reading message:", err)
 			break
 		}
-
-		message := Message{
-			Type:    "message",
-			Sender:  c.Username,
-			Content: string(msg),
+		var message Message
+		err = json.Unmarshal(msg, &message)
+		if err != nil {
+			log.Println("Error unmarshalling message:", err)
+			continue
 		}
+
+		message.Type = "message"
+		message.Sender = c.Username
 
 		c.Hub.Broadcast <- message
 	}
