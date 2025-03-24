@@ -14,13 +14,14 @@
         <label for="userSelect">Login as:</label>
         <select id="userSelect">
             <option value="">Choose User</option>
-            <option value="Alex" selected>Alex</option>
+            <option value="Alex">Alex</option>
             <option value="Jeny">Jeny</option>
             <option value="Aldo">Aldo</option>
             <option value="Steven">Steven</option>
         </select>
-        <button onclick="login()">Login</button>
+        <button id="loginButton" onclick="handleAuth()">Login</button>
     </div>
+
     <div id="chatContainer" class="chat-container" style="display: none;"></div>
 
     <script src="/static/script.js"></script>

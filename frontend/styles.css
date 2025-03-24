@@ -92,3 +92,19 @@ button {
 button:hover {
     background-color: #555;
 }
+
+.message {
+    margin: 5px 0;
+    /* padding: 8px 12px; */
+    border-radius: 10px;
+    word-wrap: break-word;
+}
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+    margin-left: auto;
+}
