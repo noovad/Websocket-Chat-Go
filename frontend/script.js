@@ -1,6 +1,8 @@
 let activeUser = "";
+let ws;
 const users = ["Alex", "Jeny", "Aldo", "Steven"];
 const chatContainer = document.getElementById("chatContainer");
+
 function login() {
     const userSelect = document.getElementById("userSelect");
     activeUser = userSelect.value;
@@ -14,6 +16,17 @@ function login() {
         chatContainer.innerHTML = "";
         displayChatBoxes();
     }
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === "message") {
+            const chatContent = document.getElementById('chatContent-Aldo'); //! update with receiver
+            const messageElement = document.createElement("p");
+            messageElement.innerHTML = `<strong>${activeUser}:</strong> ${data.content}`;
+            chatContent.appendChild(messageElement);
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+    };
 }
 
 function displayChatBoxes() {
@@ -30,6 +43,7 @@ function displayChatBoxes() {
         const chatContent = document.createElement("div");
         chatContent.className = "chat-content";
         chatContent.id = `chatContent-${user}`;
+        console.log(chatContent.id);
         chatBox.appendChild(chatContent);
 
         const inputWrapper = document.createElement("div");
@@ -38,6 +52,7 @@ function displayChatBoxes() {
         const input = document.createElement("input");
         input.type = "text";
         input.placeholder = `Type a message to ${user}...`;
+        input.value = "Test";  //! remove
         input.id = `input-${user}`;
         input.onkeydown = (event) => {
             if (event.key === "Enter") {
@@ -61,16 +76,12 @@ function displayChatBoxes() {
 function sendMessage(user) {
     const input = document.getElementById(`input-${user}`);
     const message = input.value.trim();
+    if (message != "") {
+        if (ws && message) {
+            ws.send(message);
+            // input.value = "";
+            input.value = "Test";  //! remove
 
-    if (message !== "") {
-        const chatContent = document.getElementById(`chatContent-${user}`);
-
-        const messageElement = document.createElement("p");
-        messageElement.innerHTML = `<strong>${activeUser}:</strong> ${message}`;
-        chatContent.appendChild(messageElement);
-
-        chatContent.scrollTop = chatContent.scrollHeight;
-
-        input.value = "";
+        }
     }
 }
