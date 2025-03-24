@@ -4,17 +4,16 @@ const chatContainer = document.getElementById("chatContainer");
 function login() {
     const userSelect = document.getElementById("userSelect");
     activeUser = userSelect.value;
-
     if (!activeUser) {
         alert("Pilih user untuk login!");
         return;
     }
-
-    chatContainer.style.display = "flex";
-
-    chatContainer.innerHTML = "";
-
-    displayChatBoxes();
+    ws = new WebSocket(`ws://localhost:8080/ws?username=${activeUser}`);
+    ws.onopen = () => {
+        chatContainer.style.display = "flex";
+        chatContainer.innerHTML = "";
+        displayChatBoxes();
+    }
 }
 
 function displayChatBoxes() {
