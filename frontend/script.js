@@ -20,11 +20,7 @@ function login() {
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === "message") {
-            const chatContent = document.getElementById('chatContent-Aldo'); //! update with receiver
-            const messageElement = document.createElement("p");
-            messageElement.innerHTML = `<strong>${activeUser}:</strong> ${data.content}`;
-            chatContent.appendChild(messageElement);
-            chatContent.scrollTop = chatContent.scrollHeight;
+            displayMessage(data);
         }
     };
 }
@@ -43,7 +39,6 @@ function displayChatBoxes() {
         const chatContent = document.createElement("div");
         chatContent.className = "chat-content";
         chatContent.id = `chatContent-${user}`;
-        console.log(chatContent.id);
         chatBox.appendChild(chatContent);
 
         const inputWrapper = document.createElement("div");
@@ -52,7 +47,7 @@ function displayChatBoxes() {
         const input = document.createElement("input");
         input.type = "text";
         input.placeholder = `Type a message to ${user}...`;
-        input.value = "Test";  //! remove
+        input.value = "Test";
         input.id = `input-${user}`;
         input.onkeydown = (event) => {
             if (event.key === "Enter") {
@@ -78,10 +73,31 @@ function sendMessage(user) {
     const message = input.value.trim();
     if (message != "") {
         if (ws && message) {
-            ws.send(message);
-            // input.value = "";
-            input.value = "Test";  //! remove
+            const data = {
+                content: message,
+                receiver: user
+            };
 
+            ws.send(JSON.stringify(data));
+            input.value = "Test";
         }
+    }
+}
+
+function displayMessage(data) {
+    if (data.receiver === activeUser) {
+        const chatContentReceiver = document.getElementById(`chatContent-${data.sender}`);
+        const messageElementReceiver = document.createElement("p");
+        messageElementReceiver.innerHTML = `<strong>${data.sender}:</strong> ${data.content}`;
+        chatContentReceiver.appendChild(messageElementReceiver);
+        chatContentReceiver.scrollTop = chatContentReceiver.scrollHeight;
+    }
+
+    if (data.sender === activeUser) {
+        const chatContentSender = document.getElementById(`chatContent-${data.receiver}`);
+        const messageElementSender = document.createElement("p");
+        messageElementSender.innerHTML = `<strong>You:</strong> ${data.content}`;
+        chatContentSender.appendChild(messageElementSender);
+        chatContentSender.scrollTop = chatContentSender.scrollHeight;
     }
 }
